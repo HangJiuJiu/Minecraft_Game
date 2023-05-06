@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.GameMapper">
+
+    <sql id="table_name">game</sql>
+
+    <sql id="gameColumns">
+        a.id AS "id",
+		a.name AS "name",
+		a.edition AS "edition",
+		a.type AS "type",
+		a.url AS "url",
+		a.createtime AS "createtime",
+		a.createid AS "createid",
+		a.createname AS "createname",
+		a.state AS "state"
+    </sql>
+
+    <sql id="gameJoins">
+    </sql>
+
+    <!-- 根据id查询sql语句 -->
+    <select id="get" resultType="com.ssm.bean.Game">
+        SELECT
+        <include refid="gameColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+        <include refid="gameJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <!-- 查询列表sql语句+搜索+页数 -->
+    <select id="findList" resultType="com.ssm.bean.Game">
+        SELECT
+        <include refid="gameColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+        <include refid="gameJoins"/>
+        <!-- 搜索功能-->
+        <where>
+
+            <if test="game.name != null and game.name != ''">
+                AND a.name LIKE concat('%',#{game.name},'%')
+            </if>
+            <if test="game.edition != null and game.edition != ''">
+                AND a.edition = #{game.edition}
+            </if>
+            <if test="game.type != null and game.type != ''">
+                AND a.type = #{game.type}
+            </if>
+            <if test="game.createid != null and game.createid != ''">
+                AND a.createid = #{game.createid}
+            </if>
+            <if test="game.state != null and game.state != ''">
+                AND a.state = #{game.state}
+            </if>
+        </where>
+        <!-- 一页显示10条数据 -->
+        ORDER BY a.id ASC
+        limit #{game.pageNo},#{game.pageSize}
+    </select>
+    <!-- 查询显示每一页的数据 -->
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(*)
+        from
+        <include refid="table_name"/>
+    </select>
+
+    <!-- 新增sql语句 -->
+    <insert id="insert" parameterType="com.ssm.bean.Game">
+        INSERT INTO<include refid="table_name"/>(
+        name,
+        edition,
+        type,
+        url,
+        createtime,
+        createid,
+        createname,
+        state
+        ) VALUES (
+        #{name},
+        #{edition},
+        #{type},
+        #{url},
+        #{createtime},
+        #{createid},
+        #{createname},
+        #{state}
+        )
+    </insert>
+
+    <!-- 修改sql语句 -->
+    <update id="update" parameterType="com.ssm.bean.Game">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        name = #{name},
+        edition = #{edition},
+        type = #{type},
+        url = #{url},
+        state = #{state}
+        WHERE id = #{id, jdbcType = VARCHAR}
+    </update>
+
+    <!-- 删除sql语句 -->
+    <update id="delete">
+        DELETE FROM
+        <include refid="table_name"/>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--开启注解-->
+    <mvc:annotation-driven/>
+    <!--处理静态资源-->
+    <mvc:default-servlet-handler/>
+
+    <context:component-scan base-package="com.ssm.controller"/>
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+	
+    <!-- 配置文件解析器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
+         <!-- 设置默认编码 -->  
+         <property name="defaultEncoding" value="utf-8"></property>  
+         <!-- 上传图片最大大小5M-->   
+         <property name="maxUploadSize" value="5242440"></property>    
+	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+		<!--两个星号-->
+		<mvc:mapping path="/**"/>
+    	<!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求，此为自定义拦截器的路径 -->
+    	<bean class="com.ssm.interceptor.LoginInterceptor"/>
+  		</mvc:interceptor>
+    </mvc:interceptors>
+</beans>

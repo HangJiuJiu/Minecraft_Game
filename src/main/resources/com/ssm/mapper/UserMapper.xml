@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.UserMapper">
+
+    <sql id="table_name">user</sql>
+
+    <sql id="userColumns">
+        a.id AS "id",
+		a.name AS "name",
+		a.phone AS "phone",
+		a.auth AS "auth",
+		a.password AS "password"
+    </sql>
+
+    <sql id="userJoins">
+    </sql>
+
+    <!-- 根据id查询sql语句 -->
+    <select id="get" resultType="com.ssm.bean.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+        <include refid="userJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <!-- 查询列表sql语句 -->
+    <select id="findList" resultType="com.ssm.bean.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+        <include refid="userJoins"/>
+        <where>
+
+            <if test="user.name != null and user.name != ''">
+                AND a.name LIKE concat('%',#{user.name},'%')
+            </if>
+            <if test="user.auth != null and user.auth != ''">
+                AND a.auth = #{user.auth}
+            </if>
+        </where>
+        ORDER BY a.id ASC
+    </select>
+
+    <!-- 新增sql语句 -->
+    <insert id="insert" parameterType="com.ssm.bean.User">
+        INSERT INTO<include refid="table_name"/>(
+        name,
+        phone,
+        auth,
+        password
+        ) VALUES (
+        #{name},
+        #{phone},
+        #{auth},
+        #{password}
+        )
+    </insert>
+
+    <!-- 修改sql语句 -->
+    <update id="update" parameterType="com.ssm.bean.User">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        name = #{name},
+        phone = #{phone},
+        auth = #{auth},
+        password = #{password}
+        WHERE id = #{id, jdbcType = VARCHAR}
+    </update>
+
+    <!-- 删除sql语句 -->
+    <update id="delete">
+        DELETE FROM
+        <include refid="table_name"/>
+        WHERE id = #{id}
+    </update>
+
+    <select id="identity" resultType="com.ssm.bean.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+        where a.name = #{name}
+        and a.password = #{password}
+    </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(*)
+        from
+        <include refid="table_name"/>
+    </select>
+
+</mapper>

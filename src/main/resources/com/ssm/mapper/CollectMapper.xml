@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.CollectMapper">
+
+    <sql id="table_name">collect</sql>
+
+    <sql id="collectColumns">
+        a.id AS "id",
+		a.gameid AS "gameid",
+		a.userid AS "userid",
+		a.time AS "time",
+        a.url AS "url",
+		a.gamename AS "gamename"
+    </sql>
+
+    <sql id="collectJoins">
+        left join game b on a.gameid = b.id
+    </sql>
+
+    <!-- 根据id查询其中一条sql语句 -->
+    <select id="get" resultType="com.ssm.bean.Collect">
+        SELECT
+        <include refid="collectColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+
+        WHERE a.id = #{id}
+    </select>
+
+    <!-- 查询列表sql语句 -->
+    <select id="findList" resultType="com.ssm.bean.Collect">
+        SELECT
+        <include refid="collectColumns"/>
+        FROM
+        <include refid="table_name"/>
+        a
+
+        <where>
+
+            <if test="collect.gameid != null and collect.gameid != ''">
+                AND a.gameid = #{collect.gameid}
+            </if>
+            <if test="collect.userid != null and collect.userid != ''">
+                AND a.userid = #{collect.userid}
+            </if>
+        </where>
+        ORDER BY a.id ASC
+    </select>
+
+    <!-- 新增sql语句 -->
+    <insert id="insert" parameterType="com.ssm.bean.Collect">
+        INSERT INTO<include refid="table_name"/>(
+        gameid,
+        userid,
+        time,
+        url,
+        gamename
+        ) VALUES (
+        #{gameid},
+        #{userid},
+        #{time},
+        #{url},
+        #{gamename}
+        )
+    </insert>
+
+    <!-- 修改sql语句 -->
+    <update id="update" parameterType="com.ssm.bean.Collect">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        gameid = #{gameid},
+        userid = #{userid},
+        time = #{time},
+        url =#{url},
+        gamename=#{gamename}
+        WHERE id = #{id, jdbcType = VARCHAR}
+    </update>
+
+    <!-- 删除sql语句 -->
+    <update id="delete">
+        DELETE FROM
+        <include refid="table_name"/>
+        WHERE id = #{id}
+    </update>
+
+</mapper>
